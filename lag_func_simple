@@ -1,0 +1,11 @@
+# Рост продаж по сравнению с предыдущим днем
+
+with t1 as (select date,sum(value) as value,
+coalesce(lag(sum(value),1) over(order by date),0) as lg
+from sales
+group by 1)
+
+select * from t1 where 
+lg < value
+order by date
+ 
