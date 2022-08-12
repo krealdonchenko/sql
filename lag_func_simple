@@ -39,3 +39,10 @@ from logs)
 select distinct num as consecutivenums from t1 
 where lag_1 = lag_2
 order by 1 desc
+
+consecutivenums    
+---------------
+13                 
+11                 
+7                  
+1   
