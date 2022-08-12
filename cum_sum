@@ -1,0 +1,9 @@
+# Нарастающий итог в SQL 
+# cumsum
+
+select date(ord_datetime) as dt,ord_id, 
+sum(a.an_price) over (order by o.ord_id) as cumsum
+from orders as o
+join analysis as a
+on o.ord_an = a.an_id
+order by o.ord_id
