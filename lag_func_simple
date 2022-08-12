@@ -28,4 +28,14 @@ date          value    lg
 2020-02-24    34104    28869    
 2020-02-25    41861    34104    
 2020-02-28    19283    18038  
+
+# Задание
+# Найти все Num, которые встречаются не менее трех раз подряд. Результат выведите в столбце ConsecutiveNums.
  
+with t1 as (select id, num, lag(num,1,1) over (order by id) as lag_1,
+lag(num,-1,13) over (order by id) as lag_2 
+from logs)
+
+select distinct num as consecutivenums from t1 
+where lag_1 = lag_2
+order by 1 desc
