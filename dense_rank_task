@@ -1,0 +1,26 @@
+Задание : 
+Вывести третий анализ по количеству продаж за весь период.
+Результат должен содержать столбцы:
+
+ID анализа
+Название анализа
+Количество продаж cnt
+Ранг анализа в зависимости от продаж rn
+
+with t1 as (
+
+select ord_an, count(ord_id) as cnt,
+dense_rank() over (order by count(ord_id) desc) as rn 
+
+from orders as o
+group by 1
+
+)
+
+select an_id,an_name,cnt,rn from analysis as a
+join t1 on a.an_id = t1.ord_an
+where rn = 3
+
+an_id    an_name                        cnt    rn    
+-------------------------------------------------
+20       Вирус гепатита С (кач.) РНК    123    3    
