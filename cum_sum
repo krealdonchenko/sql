@@ -21,3 +21,48 @@ dt            ord_id    cumsum
 2018-11-09    8         6725       
 2020-08-23    9         8188       
 2020-12-04    10        9152
+
+
+Задание
+Нарастающим итогом рассчитать, как увеличивалось количество проданных тестов каждый месяц каждого года с разбивкой по группе.
+
+with t1 as (
+select to_char(ord_datetime,'YYYY') as year, to_char(ord_datetime,'MM') as month, 
+an_group  as group, count(ord_id) as cnt
+
+from orders as o
+join analysis as a on 
+
+a.an_id = o.ord_an 
+group by 1,2,3)
+
+select year, month, t1.group, 
+sum(cnt) over(partition by t1.group,year order by year,month) as sum from t1
+
+
+year    month    group    sum      
+-------------------------------
+2018    01       1        16.0     
+2018    02       1        31.0     
+2018    03       1        38.0     
+2018    04       1        53.0     
+2018    05       1        59.0     
+2018    06       1        70.0     
+2018    07       1        84.0     
+2018    08       1        93.0     
+2018    09       1        105.0    
+2018    10       1        122.0    
+2018    11       1        136.0    
+2018    12       1        148.0    
+2019    01       1        14.0     
+2019    02       1        26.0     
+2019    03       1        32.0     
+2019    04       1        43.0     
+2019    05       1        51.0     
+2019    06       1        64.0     
+2019    07       1        75.0     
+2019    08       1        86.0     
+2019    09       1        103.0    
+2019    10       1        115.0    
+2019    11       1        120.0    
+2019    12       1        135.0    
