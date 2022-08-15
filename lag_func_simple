@@ -46,3 +46,26 @@ consecutivenums
 11                 
 7                  
 1   
+
+Известно, что за каждым входом следует выход. В начале дня всегда вход, последний - всегда выход.
+
+Необходимо вывести сотрудников и дни, когда они находились на рабочем месте менее 8 часов.
+
+
+with t1 as (
+select * from gate
+order by 1,2,3)
+,
+t2 as (
+select employee ,date(check_time) as check_date, (lag(check_time,-1) over (partition by employee )) - check_time as sum from t1 )
+
+select * from t2
+where sum < '8:00:00'
+
+employee    check_date    sum        
+---------------------------------
+Бердяев     2020-11-25    4:00:00    
+Воронин     2020-11-25    7:59:00    
+
+
+
