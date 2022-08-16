@@ -1,3 +1,45 @@
+Задание
+Помесячно проверить: если суммарное количество продаж в течение трех месяцев подряд падают, то вывести в столбец Result 1, иначе 0.
+
+
+with t1 as (
+select to_char(ord_datetime,'YYYY') as year, 
+to_char(ord_datetime,'MM') as month, count(ord_id) as cur_cnt
+from orders 
+group by 1,2 
+order by 1,2 )
+,
+t2 as (
+select year, month, cur_cnt, 
+lag(cur_cnt,2) over (order by year,month) as prev2_cnt,
+lag(cur_cnt,1) over (order by year,month) as prev_cnt
+from t1)
+
+
+select year,month,prev2_cnt,prev_cnt,cur_cnt,
+case when (cur_cnt - prev_cnt) < 0 and (prev_cnt - prev2_cnt) < 0 
+then 1 else 0 end as result 
+from t2
+
+
+year    month    prev2_cnt    prev_cnt    cur_cnt    result    
+-----------------------------------------------------------
+2018    01       None         None        99         0         
+2018    02       None         99          98         0         
+2018    03       99           98          89         1         
+2018    04       98           89          90         0         
+2018    05       89           90          103        0         
+2018    06       90           103         93         0         
+2018    07       103          93          102        0         
+2018    08       93           102         82         0         
+2018    09       102          82          94         0         
+2018    10       82           94          97         0         
+2018    11       94           97          82         0         
+2018    12       97           82          93         0    
+
+
+***
+
 
 Было принято решение поменять студентов, которые сидят рядом, местами. Напишите SELECT-запрос, который из исходной таблицы сформирует расположение студентов после пересадки.
 
