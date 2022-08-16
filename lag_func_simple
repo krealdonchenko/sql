@@ -67,4 +67,46 @@ employee    check_date    sum
 Воронин     2020-11-25    7:59:00    
 
 
+with t1 as (
+select an_name as name,to_char(ord_datetime,'MM') as month,count(ord_id) as current_cnt from orders as o
+join analysis as a on 
+o.ord_an = a.an_id
+where to_char(ord_datetime,'YYYY') = '2020'
+group by 1,2
+order by 1,2)
+
+
+Задание
+Помесячно вывести прирост количества продаж в процентах относительно предыдущего месяца для всех анализов в 2020 году, 
+где в названии в любом месте располагается слово "кров" или "тестостерон" в любом регистре.
+
+
+select name,month,current_cnt,
+lag(current_cnt,1) over(partition by name order by month) as prev_cnt,
+round(coalesce((current_cnt - lag(current_cnt,1) over(partition by name order by month))::numeric / (lag(current_cnt,1) over(partition by name order by month))::numeric,0) * 100,3) as change
+from t1
+where name ilike '%кровь%' or name ilike '%тестостерон%'
+order by name,month
+
+name                                         month    current_cnt    prev_cnt    change     
+----------------------------------------------------------------------------------------
+anti -VZV IgM (КРОВь)                        02       2              None        0.0        
+anti -VZV IgM (КРОВь)                        03       2              2           0.0        
+anti -VZV IgM (КРОВь)                        04       3              2           50.0       
+anti -VZV IgM (КРОВь)                        05       4              3           33.333     
+anti -VZV IgM (КРОВь)                        06       4              4           0.0        
+anti -VZV IgM (КРОВь)                        07       3              4           -25.0      
+anti -VZV IgM (КРОВь)                        08       2              3           -33.333    
+anti -VZV IgM (КРОВь)                        09       3              2           50.0       
+anti -VZV IgM (КРОВь)                        10       3              3           0.0        
+anti -VZV IgM (КРОВь)                        11       5              3           66.667     
+anti -VZV IgM (КРОВь)                        12       4              5           -20.0      
+Дигидротестостерон                           01       3              None        0.0        
+Дигидротестостерон                           02       6              3           100.0      
+Дигидротестостерон                           03       4              6           -33.333    
+Дигидротестостерон                           04       3              4           -25.0      
+Дигидротестостерон                           05       3              3           0.0        
+Дигидротестостерон                           06       5              3           66.667     
+Дигидротестостерон                           07       2              5           -60.0      
+Дигидротестостерон                           08       6              2           200.0  
 
